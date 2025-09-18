@@ -1,16 +1,17 @@
-from fastapi import FastAPI
 from mangum import Mangum
 
-# Minimal FastAPI app
-app = FastAPI()
+def app(scope, receive, send):
+    """Ultra minimal ASGI app"""
+    if scope["type"] == "http":
+        response_body = b'{"message": "Zain RAG Bot Working!", "status": "success"}'
+        await send({
+            "type": "http.response.start",
+            "status": 200,
+            "headers": [[b"content-type", b"application/json"]],
+        })
+        await send({
+            "type": "http.response.body",
+            "body": response_body,
+        })
 
-@app.get("/")
-def root():
-    return {"message": "Hello from Zain's RAG Bot!", "status": "working"}
-
-@app.get("/test")
-def test():
-    return {"test": "successful", "vercel": "working"}
-
-# Handler for Vercel
 handler = Mangum(app)
